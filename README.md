@@ -1,14 +1,14 @@
 # GReG
 Generative Retrieval Generator for Multi-hop Question Answering
 
-MuSiQue Dataset:
+Loading the MuSiQue Dataset:
 ```
 git clone https://github.com/stonybrooknlp/musique
 bash /content/musique/download_data.sh
 pip install openai
 ```
 
-HotpotQA Dataset:
+Loading the HotpotQA Dataset:
 ```
 wget http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_dev_distractor_v1.json
 ```
@@ -40,7 +40,7 @@ def read_jsonl(filepath='/content/data/musique_ans_v1.0_dev.jsonl'):
 data = read_jsonl()
 ```
 
-IIRC Dataset:
+Loading the IIRC Dataset:
 ```
 data = []
 for x in read_json():
@@ -52,4 +52,9 @@ for x in read_json():
       data.append({'question': question, 'answer': answer})
     except:
       pass
+```
+
+Installing the SpaCy Medium Language Core:
+```
+python -m spacy download en_core_web_md
 ```
