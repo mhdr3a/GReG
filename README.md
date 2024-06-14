@@ -60,3 +60,9 @@ Installing the SpaCy Medium Language Core:
 ```
 python -m spacy download en_core_web_md
 ```
+
+Factoid Answers Exact Match Evaluation:
+```
+pip install unidecode
+python [dataset_path] [retrieval_file_path] [OpenAI_API_Key] [base_model_name] [results_file_path]
+```
