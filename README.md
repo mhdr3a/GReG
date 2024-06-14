@@ -1,7 +1,7 @@
 # GReG
 Generative Retrieval Generator for Multi-hop Question Answering
 
-<p>The Generative Retrieval-Augmented Generator (GReG) for multi-hop question answering is a sophisticated AI architecture designed to tackle complex queries that require synthesizing information from multiple sources or steps. This technology stands at the cutting edge of natural language processing and machine learning, offering significant improvements over traditional single-passage retrieval systems.</p><img src='img/greg.png' style='float:right;'>
+<p style='float:left;'>The Generative Retrieval-Augmented Generator (GReG) for multi-hop question answering is a sophisticated AI architecture designed to tackle complex queries that require synthesizing information from multiple sources or steps. This technology stands at the cutting edge of natural language processing and machine learning, offering significant improvements over traditional single-passage retrieval systems.</p><img src='img/greg.png' style='float:right;'>
 
 Loading the MuSiQue Dataset:
 ```
