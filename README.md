@@ -1,5 +1,5 @@
 # GReG
-<img src='img/greg.jpg' width='50' height='118'> Generative Retrieval Generator for Multi-hop Question Answering
+<img src='img/greg.png'> Generative Retrieval Generator for Multi-hop Question Answering
 
 Loading the MuSiQue Dataset:
 ```
