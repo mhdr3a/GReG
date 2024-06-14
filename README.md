@@ -1,6 +1,6 @@
 # GReG
 
-<table style="border-collapse: collapse; border: none;">
+<table style="border: none;">
   <tr>
     <td valign="top" width="80%" style="border: none;">
       <h2>Generative Retrieval Generator for Multi-hop Question Answering</h2>
