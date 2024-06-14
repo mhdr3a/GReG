@@ -1,12 +1,12 @@
 # GReG
 
-<table>
+<table style="border-collapse: collapse; border: none;">
   <tr>
-    <td valign="top" width="80%">
+    <td valign="top" width="80%" style="border: none;">
       <h2>Generative Retrieval Generator for Multi-hop Question Answering</h2>
       <p>The Generative Retrieval-Augmented Generator (GReG) for multi-hop question answering is a sophisticated AI architecture designed to tackle complex queries that require synthesizing information from multiple sources or steps. This technology stands at the cutting edge of natural language processing and machine learning, offering significant improvements over traditional single-passage retrieval systems.</p>
     </td>
-    <td valign="top" width="20%">
+    <td valign="top" width="20%" style="border: none;">
       <img src="img/greg.png" width="100%">
     </td>
   </tr>
