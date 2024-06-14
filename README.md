@@ -1,7 +1,7 @@
 # GReG
 Generative Retrieval Generator for Multi-hop Question Answering
 
-![]([https://www.google.com/url?sa=i&url=https%3A%2F%2Fdiary-of-a-wimpy-kid.fandom.com%2Fwiki%2FGreg_Heffley&psig=AOvVaw1bepxXAEzMXayh1AjzxEm5&ust=1718484189982000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCPDRl8_624YDFQAAAAAdAAAAABAE](https://static.wikia.nocookie.net/doawk/images/9/97/GregColor.png/revision/latest?cb=20180828044727))
+![](https://static.wikia.nocookie.net/doawk/images/9/97/GregColor.png/revision/latest?cb=20180828044727)
 
 Loading the MuSiQue Dataset:
 ```
