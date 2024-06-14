@@ -32,23 +32,28 @@ def generate_answer(question):
 
 results = []
 for i, item in enumerate(data):
-    question = item['question_org']
-    gold_answer = item['answer_org']
-    
-    context_texts = [doc['text'] for doc in retrieved_data[i]['ctxs'][:4]]
-
-    generated_answer = generate_answer(question, context_texts)
-    
-    exact_match = normalize_and_compare(gold_answer, generated_answer)
-
-    results.append({
-        "question": question,
-        "gold_answer": gold_answer,
-        "generated_answer": generated_answer,
-        "exact_match": exact_match
-    })
-    
-    print(f"Processed item {i+1}/{len(data)}")
+    for j, question_data in enumerate(item['questions']):
+        question = question_data['question']
+        
+        if 'answer' in question_data and 'answer_spans' in question_data['answer'] and question_data['answer']['answer_spans']:
+            gold_answer = ' '.join(span['text'].strip() for span in question_data['answer']['answer_spans'])
+        else:
+            gold_answer = None
+        
+        print(f"Sample {i+1}-{j+1}: Gold Answer: {gold_answer}")
+        
+        generated_answer = generate_answer(question)
+        
+        exact_match = normalize_and_compare(gold_answer, generated_answer)
+        
+        results.append({
+            "question": question,
+            "gold_answer": gold_answer,
+            "generated_answer": generated_answer,
+            "exact_match": exact_match
+        })
+        
+        print(f"Processed question: {question}")
 
 exact_match_ratio = sum(result['exact_match'] for result in results) / len(results)
 
