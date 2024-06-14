@@ -1,5 +1,5 @@
-# GReG <img src='https://static.wikia.nocookie.net/doawk/images/9/97/GregColor.png/revision/latest?cb=20180828044727' width='20' height='47'>
-Generative Retrieval Generator for Multi-hop Question Answering
+# GReG
+<img src='https://static.wikia.nocookie.net/doawk/images/9/97/GregColor.png/revision/latest?cb=20180828044727' width='50' height='118'> Generative Retrieval Generator for Multi-hop Question Answering
 
 Loading the MuSiQue Dataset:
 ```
