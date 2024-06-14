@@ -69,6 +69,35 @@ Installing the SpaCy Medium Language Core:
 ```
 python -m spacy download en_core_web_md
 ```
+Clone the FiD repo for the passage retrieval phase:
+```
+git clone https://github.com/facebookresearch/FiD.git
+```
+
+**Indexing Wikipedia Knowledge Source (Wiki Source Indexer)**
+
+```
+python  FiD/generate_retriever_embedding.py \
+        --model_path <model_dir> \ #directory
+        --passages passages.tsv \ #.tsv file
+        --output_path wikipedia_embeddings \
+        --shard_id 0 \
+        --num_shards 1 \
+        --per_gpu_batch_size 500 \
+```
+
+**Passage Retrieval**
+Once indexing is complete, you can efficiently retrieve passages for a given input query:
+
+```
+python FiD/passage_retrieval.py \
+    --model_path <model_dir> \
+    --passages psgs_w100.tsv \
+    --data_path data.json \
+    --passages_embeddings "wikipedia_embeddings/wiki_*" \
+    --output_path retrieved_data.json \
+    --n-docs 100 \
+```
 
 Factoid Answers Exact Match Evaluation:
 ```
