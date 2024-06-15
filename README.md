@@ -3,7 +3,7 @@
 <table style="border: none;">
   <tr>
     <td valign="top" width="80%" style="border-width: 0 !important;">
-      <h2>Pre-Generative Retrieval Generator for Multi-hop Question Answering</h2>
+      <h2>Pre-Generative Retrieval-Augmented Generator for Multi-hop Question Answering</h2>
       <p>The Pre-<b>G</b>enerative <b>Re</b>trieval-Augmented <b>G</b>enerator (GReG) for multi-hop question answering is a sophisticated AI architecture designed to tackle complex queries that require synthesizing information from multiple sources or steps. This technology stands at the cutting edge of natural language processing and machine learning, offering significant improvements over traditional single-passage retrieval systems.</p>
     </td>
     <td valign="top" width="20%" style="border-width: 0 !important;">
