@@ -12,6 +12,16 @@
   </tr>
 </table>
 
+Initial Setup:
+```
+conda create --name greg python=3.9
+conda activate greg
+conda install pip
+git clone https://github.com/mhdr3a/GReG.git
+cd GReG
+pip install -r requirements.txt
+```
+
 Loading the MuSiQue Dataset:
 ```
 git clone https://github.com/stonybrooknlp/musique
