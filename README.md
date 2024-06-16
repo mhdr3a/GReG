@@ -14,9 +14,17 @@
 
 Initial Setup:
 ```
-conda create --name greg python=3.9
+conda create --name greg python=3.8
 conda activate greg
 conda install pip
+git clone https://github.com/facebookresearch/FiD.git
+pip install "pydantic>=1.7.4,<3.0.0"
+cd FiD
+pip install -r requirements.txt
+pip install filelock
+pip install typing-extensions
+bash get-data.sh
+bash get-model.sh -m nq_retriever
 git clone https://github.com/mhdr3a/GReG.git
 cd GReG
 pip install -r requirements.txt
@@ -32,20 +40,6 @@ pip install openai
 Loading the HotpotQA Dataset:
 ```
 wget http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_dev_distractor_v1.json
-```
-
-Wrap the output content of each notebook cell:
-```
-from IPython.display import display, HTML
-def set_css():
-  display(HTML('''
-  <style>
-    pre {
-        white-space: pre-wrap;
-    }
-  </style>
-  '''))
-get_ipython().events.register('pre_run_cell', set_css)
 ```
 
 Read a jsonl file:
