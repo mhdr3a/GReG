@@ -25,9 +25,14 @@ pip install filelock
 pip install typing-extensions
 bash get-data.sh
 bash get-model.sh -m nq_retriever
-git clone https://github.com/mhdr3a/GReG.git
-cd GReG
-pip install -r requirements.txt
+conda install six
+python  generate_passage_embeddings.py \
+        --model_path pretrained_models/nq_retriever \
+        --passages open_domain_data/psgs_w100.tsv \
+        --output_path wikipedia_embeddings \
+        --shard_id 0 \
+        --num_shards 1 \
+        --per_gpu_batch_size 500 \
 ```
 
 Loading the MuSiQue Dataset:
