@@ -39,11 +39,10 @@ for i, item in enumerate(data):
     generated_answer = generate_answer(question)
     
     # Check if the generated answer matches the gold answer exactly
-    exact_match = generated_answer.strip() == gold_answer.strip()
+    exact_match = normalize_and_compare(gold_answer, generated_answer)
 
     # Record the result
     results.append({
-        "id": item['id'],
         "question": question,
         "gold_answer": gold_answer,
         "generated_answer": generated_answer,
