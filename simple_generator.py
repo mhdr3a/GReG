@@ -31,24 +31,26 @@ def generate_answer(question):
     return response.choices[0].message['content']
 
 results = []
-results = []
 for i, item in enumerate(data):
     question = item['question_org']
     gold_answer = item['answer_org']
     
-    context_texts = [doc['text'] for doc in retrieved_data[i]['ctxs'][:4]]
-
-    generated_answer = generate_answer(question, context_texts)
+    # Generate the answer
+    generated_answer = generate_answer(question)
     
-    exact_match = normalize_and_compare(gold_answer, generated_answer)
+    # Check if the generated answer matches the gold answer exactly
+    exact_match = generated_answer.strip() == gold_answer.strip()
 
+    # Record the result
     results.append({
+        "id": item['id'],
         "question": question,
         "gold_answer": gold_answer,
         "generated_answer": generated_answer,
         "exact_match": exact_match
     })
     
+    # Print statement after processing each data item
     print(f"Processed item {i+1}/{len(data)}")
     
 exact_match_ratio = sum(result['exact_match'] for result in results) / len(results)
