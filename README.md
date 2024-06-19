@@ -53,19 +53,6 @@ python ../FiD/passage_retrieval.py \
     --n-docs 10 \
 ```
 
-**Passage Retrieval**
-Once indexing is complete, you can efficiently retrieve passages for a given input query:
-
-```
-python FiD/passage_retrieval.py \
-    --model_path <model_dir> \
-    --passages psgs_w100.tsv \
-    --data_path data.json \
-    --passages_embeddings "wikipedia_embeddings/wiki_*" \
-    --output_path retrieved_data.json \
-    --n-docs 100 \
-```
-
 Factoid Answers Exact Match Evaluation:
 ```
 pip install unidecode
