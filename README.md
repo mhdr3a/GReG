@@ -17,6 +17,7 @@ Initial Setup:
 conda create --name greg python=3.8
 conda activate greg
 conda install pip
+pip install gdown
 git clone https://github.com/facebookresearch/FiD.git
 pip install "pydantic>=1.7.4,<3.0.0"
 cd FiD
