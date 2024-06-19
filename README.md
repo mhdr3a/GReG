@@ -35,6 +35,11 @@ python  generate_passage_embeddings.py \
         --per_gpu_batch_size 500 \
 pip install gdown
 pip install openai
+pip install IPython
+pip install spacy
+python -m spacy download en_core_web_md
+pip install matplotlib
+pip install termcolor
 ```
 
 Loading the MuSiQue Dataset:
