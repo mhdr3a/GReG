@@ -115,29 +115,15 @@ def combine_dependent_words_entropies(words, word_entropies, output_entities, ma
                 word_entropies[i] = max_ents
     return word_entropies
 
-def filter_words(words, word_entropies, question_entities, output_entities, threshold, ignore_entropies=False, placeholder=' '):
-    if threshold == 'median' or threshold == 'p-50':
-        th = np.median(word_entropies)
-    elif threshold == 'p-25':
-        th = np.percentile(word_entropies, 25)
-    else:
-        th = None
+def filter_words(words, word_entropies, question_entities, output_entities, threshold, mask=' '):
+    th = np.percentile(word_entropies, threshold) # threshold = 0 -> ignore_entropies = True, threshold = 100 -> template_query = question
     filtered_words = []
     for word, entropy in zip(words, word_entropies):
         norm_word = remove_punctuation(word)
-        if ignore_entropies == False:
-            if entropy > th:
-                if not (any(norm_word in ent for ent in question_entities)): # word is not an entity within the question
-                    if any(norm_word in ent for ent in output_entities): # word is an entity
-                        filtered_words.append(placeholder)
-                        continue
-            filtered_words.append(word)
-        else:
-            if not (any(norm_word in ent for ent in question_entities)): # word is not an entity within the question
-                if any(norm_word in ent for ent in output_entities): # word is an entity
-                    filtered_words.append(placeholder)
-                    continue
-            filtered_words.append(word)
+        if (entropy > th) and any(norm_word in ent for ent in output_entities) and (not any(norm_word in ent for ent in question_entities)):
+            filtered_words.append(mask)
+            continue
+        filtered_words.append(word)
     return filtered_words
 
 def get_entities(sentence):
@@ -205,8 +191,7 @@ def main(opt):
     v = opt.verbose
     max_tokens = opt.max_tokens
     num_answers = opt.num_answers
-    ignore_entropies = opt.ignore_entropies
-    threshold = opt.threshold
+    percentile = opt.percentile
     temperature = opt.temperature
     model_top_p = opt.top_p
     
@@ -275,12 +260,12 @@ def main(opt):
                 # display(HTML(colorized_sentence))
                 pass
 
-            filtered_words = filter_words(words, word_entropies, question_entities, generated_answer_entities, threshold, ignore_entropies)
+            filtered_words = filter_words(words, word_entropies, question_entities, generated_answer_entities, percentile)
             if v:
                 print(f"template query: {' '.join(filtered_words)}\n")
             new_sample = {'id': id, 'question_org': question, 'question': ' '.join(filtered_words).strip(), 'answer_org': answer, 'answer': 'None'}
             samples.append(new_sample)
-    with open(f"{dataset}_{model}_{ignore_entropies}{'' if ignore_entropies else '_' + threshold}.jsonl", 'w') as file:
+    with open(f"{dataset}_{model}_{percentile}.jsonl", 'w') as file:
         for item in samples:
             file.write(json.dumps(item) + '\n')
 
@@ -301,9 +286,7 @@ if __name__ == '__main__':
                         help="")
     parser.add_argument('--top_p', required=False, type=float, default=.1, 
                         help="")
-    parser.add_argument('--ignore_entropies', required=False, type=int, default=False, 
-                        help="")
-    parser.add_argument('--threshold', required=False, type=str, default='median', 
+    parser.add_argument('--percentile', required=False, type=int, default=50, 
                         help="")
     parser.add_argument('--verbose', required=False, type=int, default=False, 
                         help="")
