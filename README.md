@@ -53,6 +53,8 @@ python ../FiD/passage_retrieval.py \
     --n-docs 10 \
 ```
 
+Replace ```FiD/src/data.py``` with ```GReG/src/data.py```
+
 Factoid Answers Exact Match Evaluation:
 ```
 pip install unidecode
