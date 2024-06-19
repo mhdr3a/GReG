@@ -44,16 +44,19 @@ cd ..
 git clone https://github.com/mhdr3a/GReG.git
 cd GReG
 bash download_datasets.sh # MuSiQue, HotpotQA, IIRC, and 2WikiMultihopQA
+```
+
+Replace ```FiD/src/data.py``` with ```GReG/src/data.py```
+
+```
 python ../FiD/passage_retrieval.py \
     --model_path ../FiD/pretrained_models/nq_retriever \
     --passages ../FiD/open_domain_data/psgs_w100.tsv \
-    --data_path <dataset_dir> \
+    --data <dataset_dir> \
     --passages_embeddings ../FiD/wikipedia_embeddings_00 \
     --output_path <output_dir> \
     --n-docs 10 \
 ```
-
-Replace ```FiD/src/data.py``` with ```GReG/src/data.py```
 
 Factoid Answers Exact Match Evaluation:
 ```
