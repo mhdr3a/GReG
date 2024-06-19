@@ -40,66 +40,17 @@ pip install spacy
 python -m spacy download en_core_web_md
 pip install matplotlib
 pip install termcolor
-```
-
-Loading the MuSiQue Dataset:
-```
-git clone https://github.com/stonybrooknlp/musique
-bash /content/musique/download_data.sh
-pip install openai
-```
-
-Loading the HotpotQA Dataset:
-```
-wget http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_dev_distractor_v1.json
-```
-
-Read a jsonl file:
-```
-import json
-
-def read_jsonl(filepath='/content/data/musique_ans_v1.0_dev.jsonl'):
-  data = []
-  with open(filepath, 'r') as file:
-    for line in file:
-      data.append(json.loads(line.strip()))
-  return data
-data = read_jsonl()
-```
-
-Loading the IIRC Dataset:
-```
-data = []
-for x in read_json():
-  for y in x['questions']:
-    try:
-      answer_spans = y['answer']['answer_spans']
-      answer = ' '.join(list(map(lambda h: h['text'], answer_spans)))
-      question = y['question']
-      data.append({'question': question, 'answer': answer})
-    except:
-      pass
-```
-
-Installing the SpaCy Medium Language Core:
-```
-python -m spacy download en_core_web_md
-```
-Clone the FiD repo for the passage retrieval phase:
-```
-git clone https://github.com/facebookresearch/FiD.git
-```
-
-**Indexing Wikipedia Knowledge Source (Wiki Source Indexer)**
-
-```
-python  FiD/generate_retriever_embedding.py \
-        --model_path <model_dir> \ #directory
-        --passages passages.tsv \ #.tsv file
-        --output_path wikipedia_embeddings \
-        --shard_id 0 \
-        --num_shards 1 \
-        --per_gpu_batch_size 500 \
+cd ..
+git clone https://github.com/mhdr3a/GReG.git
+cd GReG
+bash download_datasets.sh # MuSiQue, HotpotQA, IIRC, and 2WikiMultihopQA
+python ../FiD/passage_retrieval.py \
+    --model_path ../FiD/pretrained_models/nq_retriever \
+    --passages ../FiD/open_domain_data/psgs_w100.tsv \
+    --data_path <dataset_dir> \
+    --passages_embeddings ../FiD/wikipedia_embeddings_00 \
+    --output_path <output_dir> \
+    --n-docs 10 \
 ```
 
 **Passage Retrieval**
