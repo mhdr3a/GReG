@@ -47,6 +47,7 @@ bash download_datasets.sh # MuSiQue, HotpotQA, IIRC, and 2WikiMultihopQA
 ```
 
 Replace ```FiD/src/data.py``` with ```GReG/src/data.py```
+Replace ```FiD/src/evaluation.py``` with ```GReG/src/evaluation.py```
 
 ```
 python ../FiD/passage_retrieval.py \
