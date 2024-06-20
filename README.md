@@ -58,7 +58,6 @@ python ../FiD/passage_retrieval.py \
     --passages_embeddings ../FiD/wikipedia_embeddings_00 \
     --output_path <output_dir> \
     --n-docs 10 \
-    --save_or_load_index
 ```
 
 Factoid Answers Exact Match Evaluation:
