@@ -40,6 +40,7 @@ pip install spacy
 python -m spacy download en_core_web_md
 pip install matplotlib
 pip install termcolor
+pip install unidecode
 cd ..
 git clone https://github.com/mhdr3a/GReG.git
 cd GReG
@@ -58,10 +59,4 @@ python ../FiD/passage_retrieval.py \
     --passages_embeddings ../FiD/wikipedia_embeddings_00 \
     --output_path <output_dir> \
     --n-docs 10 \
-```
-
-Factoid Answers Exact Match Evaluation:
-```
-pip install unidecode
-python <dataset_path> <retrieval_file_path> <OpenAI_API_Key> <base_model_name> <results_file_path>
 ```
