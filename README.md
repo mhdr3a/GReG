@@ -4,7 +4,7 @@
   <tr>
     <td valign="top" width="80%" style="border-width: 0 !important;">
       <h2>Generate-Retrieve-Generate Framework for Open Domain Question Answering</h2>
-      <p><b>G</b>enerate-<b>Re</b>trieve-<b>G</b>enerate Framework for Open Domain Question Answering (GReG) for multi-hop question answering is a sophisticated AI architecture designed to tackle complex queries that require synthesizing information from multiple sources or steps. This technology stands at the cutting edge of natural language processing and machine learning, offering significant improvements over traditional single-passage retrieval systems.</p>
+      <p><b>G</b>enerate-<b>Re</b>trieve-<b>G</b>enerate (GReG) Framework for Open Domain Question Answering is a sophisticated AI architecture designed to tackle complex queries that require synthesizing information from multiple sources or steps. This technology stands at the cutting edge of natural language processing and machine learning, offering significant improvements over traditional single-passage retrieval systems.</p>
     </td>
     <td valign="top" width="20%" style="border-width: 0 !important;">
       <img src="img/greg.png" width="100%">
