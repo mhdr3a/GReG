@@ -53,11 +53,27 @@ Replace ```FiD/src/data.py``` with ```GReG/src/data.py```
 Replace ```FiD/src/evaluation.py``` with ```GReG/src/evaluation.py```
 
 ```
+<dataset_name> = [MuSiQue, HotpotQA, IIRC, 2WikiMultihopQA, NQ, TriviaQA]
+<model_name> = [gpt-3.5-turbo, llama-3]
+```
+
+Passage retrieval using a pre-trained DPR on NQ (percentile = 100: query = question, 50: template query considering entropies, 0: template query ignoring entropies):
+```
 python ../FiD/passage_retrieval.py \
     --model_path ../FiD/pretrained_models/nq_retriever \
     --passages ../FiD/open_domain_data/psgs_w100.tsv \
-    --data <dataset_dir> \
+    --data data/<dataset_name>/<filename> \
     --passages_embeddings ../FiD/wikipedia_embeddings_00 \
-    --output_path <output_dir> \
+    --output_path results/<dataset_name>/percentile_<0,50,100>/retrieved_passages.json \
     --n-docs 10 \
+```
+
+Factoid answer generation using 4 (top_k > 0: with context | top_k = 0: without context) different prompts (metrics are either 0:(EM, ROUGE-F1, Semantic Similarity) or 1:(Sacc, Lacc)):
+```
+python factoid_answer_generator.py \
+      --data results/<dataset_name>/percentile_<0,50,100>/retrieved_passages.json
+      --model <model_name> \
+      --top_k <0,1,5,10> \
+      --api_key <your_openai_api_key> \
+      --metrics <0,1>
 ```
