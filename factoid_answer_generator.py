@@ -178,6 +178,7 @@ def main(opt):
     filepath = opt.data
     ext = filepath.split('.')[-1]
     dataset = filepath.split('/')[-3]
+    assert dataset in ['MuSiQue', 'HotpotQA', 'IIRC', '2WikiMultihopQA', 'NQ', 'TriviaQA']
     
     data, id_key, n = read_data(filepath, ext, dataset)
     
@@ -275,7 +276,7 @@ if __name__ == '__main__':
                         help="Exact name of the model")
     parser.add_argument('--top_k', required=False, type=int, default=0, 
                         help="Top-k contexts used for Retrieval-Augmented Generation (RAG)")
-    parser.add_argument('--include_titles', required=False, type=int, default=0, 
+    parser.add_argument('--include_titles', required=False, type=int, default=1, 
                         help="0: Do not include the titles for the contexts | 1: Include the titles for the contexts | Only works when top_k > 0")
     parser.add_argument('--api_key', required=False, type=str, default='sk-proj-GoCByQuK462EuWXCXjEkT3BlbkFJD8h4uoNag5STZiKJdpN7', 
                         help="OpenAI API key")
