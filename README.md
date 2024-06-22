@@ -41,6 +41,7 @@ python -m spacy download en_core_web_md
 pip install matplotlib
 pip install termcolor
 pip install unidecode
+pip install rouge-score
 cd ..
 git clone https://github.com/mhdr3a/GReG.git
 cd GReG
