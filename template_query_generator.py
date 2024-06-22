@@ -273,7 +273,7 @@ def main(opt):
                 print(f"template query: {' '.join(filtered_words)}\n")
             new_sample = {'id': id, 'question_org': question, 'question': ' '.join(filtered_words).strip(), 'answer_org': answer, 'answer': 'None'}
             samples.append(new_sample)
-    with open(f"{dataset}_{model}_{percentile}.jsonl", 'w') as file:
+    with open(f"template_queries/{dataset}_{model}_{percentile}.jsonl", 'w') as file:
         for item in samples:
             file.write(json.dumps(item) + '\n')
 
