@@ -68,6 +68,15 @@ python ../FiD/passage_retrieval.py \
     --n-docs 10 \
 ```
 
+Template query generation in 2 ways (percentile = 50: considering the entropies median as a threshold to mask the named entities | 0: masking all the named entities present in the answer yet absent in the question):
+```
+python template_query_generator.py \
+    --data data/<dataset_name>/<filename> \
+    --model <model_name> \
+    --api_key <your_openai_api_key> \
+    --percentile <0,50>
+```
+
 Factoid answer generation using 4 (top_k > 0: with context | top_k = 0: without context) different prompts (metrics are either 0:(EM, ROUGE-F1, Semantic Similarity) or 1:(Sacc, Lacc)):
 ```
 python factoid_answer_generator.py \
