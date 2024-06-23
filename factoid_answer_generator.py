@@ -52,9 +52,9 @@ def normalize(str1):
 def compare(str1, str2):
     return str1 == str2
 
-def estimate_cost(total_samples, fixed_instructions_msg, model, questions, contexts, max_output_tokens_per_sample, word_to_token_ratio=1.33):
+def estimate_cost(total_samples, fixed_instructions_msg, model, questions, max_output_tokens_per_sample, contexts=None, word_to_token_ratio=1.33, include_contexts=True):
     fixed_instructions_tokens = word_to_token_ratio * len(fixed_instructions_msg.replace('\n', ' ').strip().split())
-    total_context_tokens = word_to_token_ratio * sum(list(map(lambda x: sum(list(map(lambda y: len(y.replace('\n', ' ').strip().split()), x))), contexts)))
+    total_context_tokens = word_to_token_ratio * sum(list(map(lambda x: sum(list(map(lambda y: len(y.replace('\n', ' ').strip().split()), x))), contexts))) if include_contexts else 0
     total_input_tokens = word_to_token_ratio * sum(list(map(lambda q: len(q['question'].replace('\n', ' ').strip().split()), questions))) + total_samples * fixed_instructions_tokens + total_context_tokens
     total_output_tokens = total_samples * max_output_tokens_per_sample
     cost_per_1M_tokens_input = 5 if model == 'gpt-4o' else (.5 if model == 'gpt-3.5-turbo' else (10 if model == 'gpt-4-turbo' else None))
@@ -233,7 +233,7 @@ def main(opt):
         ##### </defining the prompt> #####
         ##### <prompt the user with the estimated total cost before the first iteration> #####
         if first_iter:
-            estimated_cost, _ = estimate_cost(n, initial_prompt if top_k > 0 else full_prompt, model, data, list(map(lambda x: list(map(lambda y: y['title'] + '\n' + y['text'], x['ctxs'][:top_k])), data)), max_tokens)
+            estimated_cost, _ = estimate_cost(n, initial_prompt if top_k > 0 else full_prompt, model, data, max_tokens, list(map(lambda x: list(map(lambda y: y['title'] + '\n' + y['text'], x['ctxs'][:top_k])), data)))
             res = input(f'Total estimated cost is: ${estimated_cost:.2f}. Continue? [y/n] ')
             assert res.strip().lower() == 'y', "User decided to abort the process."
             first_iter = False
