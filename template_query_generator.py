@@ -12,6 +12,7 @@ from copy import deepcopy
 from termcolor import colored
 import math
 import json
+import os
 
 # def map_entropy_to_color(entropy, min_entropy, max_entropy, inv):
 #     if max_entropy != min_entropy:
@@ -274,7 +275,11 @@ def main(opt):
             template_query = question + ' ' + ' '.join(filtered_words).strip()
             new_sample = {'id': id, 'question_org': question, 'question': template_query, 'answer_org': answer, 'answer': 'None'}
             samples.append(new_sample)
-    with open(f"results/{dataset}/{model}/{dataset}_{model}_{percentile}.jsonl", 'w') as file:
+    file_path = f"results/{dataset}/{model}/{dataset}_{model}_{percentile}.jsonl"
+    directory = os.path.dirname(file_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    with open(file_path, 'w') as file:
         for item in samples:
             file.write(json.dumps(item) + '\n')
 
