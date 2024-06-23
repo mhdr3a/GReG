@@ -8,6 +8,7 @@ from rouge_score import rouge_scorer
 from transformers import BertTokenizer, BertModel
 import numpy as np
 from termcolor import colored
+import os
 
 def correct_json_list(json_string):
     corrected_string = re.sub(r'^.*?\[', '[', json_string, flags=re.DOTALL)
@@ -262,7 +263,11 @@ def main(opt):
         print(f"Lacc: {La}")
     ##### </printing evaluation results> #####
     ##### <saving the results> #####
-    with open(f'results/{dataset}/{model}/{dataset}_{model}_{top_k}_{include_titles}_{metrics}_{f"{EM}_{acc}_{pre}_{rec}_{f1}_{ss}" if metrics == 0 else f"{Sa}_{La}"}.jsonl', 'w') as f:
+    file_path = f'results/{dataset}/{model}/{dataset}_{model}_{top_k}_{include_titles}_{metrics}_{f"{EM}_{acc}_{pre}_{rec}_{f1}_{ss}" if metrics == 0 else f"{Sa}_{La}"}.jsonl'
+    directory = os.path.dirname(file_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    with open(file_path, 'w') as f:
         for sample in samples:
             f.write(json.dumps(sample) + '\n')
     ##### </saving the results> #####
