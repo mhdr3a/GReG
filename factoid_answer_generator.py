@@ -164,15 +164,16 @@ def openai_generator(api_key, model, full_prompt, max_tokens, num_answers, tempe
 
 def evaluate_factoid_answers(metrics, answer, generated_answer, scorer):
     EM, precision, recall, fmeasure, sem_sim, Sacc, Lacc = 0, 0, 0, 0, 0, 0, 0
-    if metrics == 0: # Exact Match (EM), ROUGE, and Semantic Similarity
+    if metrics == 0 or metrics == 2: # Exact Match (EM) and ROUGE
         EM = compare(normalize(answer), normalize(generated_answer))
         scores = scorer.score(answer, generated_answer)['rougeL']
         precision = scores.precision; recall = scores.recall; fmeasure = scores.fmeasure
-        sem_sim = compute_semantic_similarity(answer, generated_answer)
-    else: # Sacc and Lacc (Strict and Lenient Accuracy)
+    elif metrics == 1: # Sacc and Lacc (Strict and Lenient Accuracy)
         factoids = json.loads(correct_json_list(generated_answer))
         Sacc = compute_strict_accuracy(normalize(answer), list(map(normalize, factoids)))
         Lacc = compute_lenient_accuracy(normalize(answer), list(map(normalize, factoids)))
+    if metrics == 2: # Semantic Similarity
+        sem_sim = compute_semantic_similarity(answer, generated_answer)
     return EM, precision, recall, fmeasure, sem_sim, Sacc, Lacc
 
 def main(opt):
@@ -184,23 +185,32 @@ def main(opt):
     data, id_key, n = read_data(filepath, ext, dataset)
     
     model = opt.model
-    v = opt.verbose
-    max_tokens = opt.max_tokens
+    assert model in ['gpt-3.5-turbo', 'gpt-4o']
+    v = int(opt.verbose)
+    assert v == 0 or v == 1
+    max_tokens = int(opt.max_tokens)
+    assert max_tokens > 0
     num_answers = opt.num_answers
+    assert num_answers > 0
     temperature = opt.temperature
+    assert 0 <= temperature <= 1
     model_top_p = opt.top_p
+    assert .1 <= model_top_p <= 1
     api_key = opt.api_key
     top_k = opt.top_k
     assert 0 <= top_k <= 10
     include_titles = opt.include_titles
-    metrics = opt.metrics # 0: Exact Match and ROUGE | 1: Lenient and Strict Accuracy
+    assert include_titles == 0 or include_titles == 1
+    metrics = opt.metrics # 0: Exact Match (EM) and ROUGE | 1: Strict and Lenient Accuracy | 2: Exact Match (EM), ROUGE, and Semantic Similarity
+    assert metrics == 0 or metrics == 1 or metrics == 2
     scorer = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True) # Only works if metrics = 0
-    EM = 0; precision = 0; recall = 0; fmeasure = 0; sem_sim = 0 # Only works if metrics = 0
+    EM = 0; precision = 0; recall = 0; fmeasure = 0; # Only works if metrics = 0 | 2
+    sem_sim = 0 # Only works if metrics = 2
     Sacc = 0; Lacc = 0 # Only works if metrics = 1
     samples = []
     first_iter = True
     
-    for i in trange(n):
+    for i in trange(3):
         datum = data[i]
         question = datum['question']
         answer = datum['answer']
@@ -244,26 +254,30 @@ def main(opt):
                 color = 'green' if mets[6] else 'red'
             print(f'A: {answer}\nO: {highlight_ngrams(generated_answer, color=color)}')
             if metrics == 0:
-                print(f'SS: {mets[4]:.3f}')
-            else:
+                print(f'EM: {mets[0]:.3f}')
+            elif metrics == 1:
                 print(f'Lacc: {mets[6]:.3f}')
+            elif metrics == 2:
+                print(f'Sem-Sim: {mets[4]:.3f}')
         ##### </printing logs> #####
     ##### <printing evaluation results> #####
-    if metrics == 0:
-        acc = round(EM/n, 3); pre = round(precision/n, 3); rec = round(recall/n, 3); f1 = round(fmeasure/n, 3); ss = round(sem_sim/n, 3)
+    if metrics == 0 or metrics == 2:
+        acc = round(EM/n, 3); pre = round(precision/n, 3); rec = round(recall/n, 3); f1 = round(fmeasure/n, 3)
         print(f'\nEM: {EM}')
         print(f"Accuracy: {acc}")
         print(f"Precision: {pre}")
         print(f"Recall: {rec}")
         print(f"F-1: {f1}")
-        print(f"Sem-Sim: {ss}")
-    else:
+    elif metrics == 1:
         Sa = round(Sacc/n, 3); La = round(Lacc/n, 3)
         print(f'\nSacc: {Sa}')
         print(f"Lacc: {La}")
+    if metrics == 2:
+        ss = round(sem_sim/n, 3)
+        print(f"Sem-Sim: {ss}")
     ##### </printing evaluation results> #####
     ##### <saving the results> #####
-    file_path = f'results/{dataset}/{model}/{dataset}_{model}_{top_k}_{include_titles}_{metrics}_{f"{EM}_{acc}_{pre}_{rec}_{f1}_{ss}" if metrics == 0 else f"{Sa}_{La}"}.jsonl'
+    file_path = f'results/{dataset}/{model}/{dataset}_{model}_{top_k}_{include_titles}_{metrics}_{f"{EM}_{acc}_{pre}_{rec}_{f1}_{ss}" if metrics == 2 else (f"{Sa}_{La}" if metrics == 1 else f"{EM}_{acc}_{pre}_{rec}_{f1}")}.jsonl'
     directory = os.path.dirname(file_path)
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -294,7 +308,7 @@ if __name__ == '__main__':
     parser.add_argument('--top_p', required=False, type=float, default=.1, 
                         help="Model config")
     parser.add_argument('--metrics', required=False, type=int, default=0, 
-                        help="0: Exact Match (EM), ROUGE, and Semantic Similarity | 1: Strict and Lenient Accuracy")
+                        help="0: Exact Match (EM) and ROUGE | 1: Strict and Lenient Accuracy | 2: Exact Match (EM), ROUGE, and Semantic Similarity")
     parser.add_argument('--eval_only', required=False, type=int, default=0, 
                         help="0: Generate factoid answers, then evaluate | 1: Only evaluate a saved file")
     parser.add_argument('--verbose', required=False, type=int, default=0, 
