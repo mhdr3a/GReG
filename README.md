@@ -62,7 +62,7 @@ Passage retrieval using a pre-trained DPR on NQ (percentile = 100: query = quest
 python ../FiD/passage_retrieval.py \
     --model_path ../FiD/pretrained_models/nq_retriever \
     --passages ../FiD/open_domain_data/psgs_w100.tsv \
-    --data data/<dataset_name>/<filename> \
+    --data results/<dataset_name>/<model_name>/<dataset_name>_<model_name>_<0,50>.jsonl \
     --passages_embeddings ../FiD/wikipedia_embeddings_00 \
     --output_path results/<dataset_name>/percentile_<0,50,100>/retrieved_passages.json \
     --n-docs 10 \
