@@ -189,7 +189,7 @@ def read_data(filepath, ext, dataset):
 def main(opt):
     filepath = opt.data
     ext = filepath.split('.')[-1]
-    dataset = filepath.split('/')[-2] + '_' + filepath.split('/')[-1].split('.')[0]
+    dataset = filepath.split('/')[-2]
     assert dataset in ['MuSiQue', 'HotpotQA', 'IIRC', '2WikiMultihopQA', 'NQ', 'TriviaQA']
     
     data, id_key, n = read_data(filepath, ext, dataset)
@@ -271,9 +271,10 @@ def main(opt):
             filtered_words = filter_words(words, word_entropies, question_entities, generated_answer_entities, percentile)
             if v:
                 print(f"template query: {' '.join(filtered_words)}\n")
-            new_sample = {'id': id, 'question_org': question, 'question': ' '.join(filtered_words).strip(), 'answer_org': answer, 'answer': 'None'}
+            template_query = question + ' ' + ' '.join(filtered_words).strip()
+            new_sample = {'id': id, 'question_org': question, 'question': template_query, 'answer_org': answer, 'answer': 'None'}
             samples.append(new_sample)
-    with open(f"template_queries/{dataset}_{model}_{percentile}.jsonl", 'w') as file:
+    with open(f"results/{dataset}/{model}/{dataset}_{model}_{percentile}.jsonl", 'w') as file:
         for item in samples:
             file.write(json.dumps(item) + '\n')
 
