@@ -47,6 +47,18 @@ def highlight_ngrams(sentence, ngrams_to_highlight=[], color='red', highlight_al
         sentence = sentence.replace(ngram, colored(ngram, color))
     return sentence
 
+def estimate_cost(total_samples, fixed_instructions_msg, model, questions, max_output_tokens_per_sample, contexts=None, word_to_token_ratio=1.33, include_contexts=True):
+    fixed_instructions_tokens = word_to_token_ratio * len(fixed_instructions_msg.replace('\n', ' ').strip().split())
+    total_context_tokens = word_to_token_ratio * sum(list(map(lambda x: sum(list(map(lambda y: len(y.replace('\n', ' ').strip().split()), x))), contexts))) if include_contexts else 0
+    total_input_tokens = word_to_token_ratio * sum(list(map(lambda q: len(q['question'].replace('\n', ' ').strip().split()), questions))) + total_samples * fixed_instructions_tokens + total_context_tokens
+    total_output_tokens = total_samples * max_output_tokens_per_sample
+    cost_per_1M_tokens_input = 5 if model == 'gpt-4o' else (.5 if model == 'gpt-3.5-turbo' else (10 if model == 'gpt-4-turbo' else None))
+    cost_per_1M_tokens_output = 15 if model == 'gpt-4o' else (1.5 if model == 'gpt-3.5-turbo' else (30 if model == 'gpt-4-turbo' else None))
+
+    total_tokens, estimated_cost = total_input_tokens + total_output_tokens, cost_per_1M_tokens_input * (total_input_tokens / 1000000) + cost_per_1M_tokens_output * (total_output_tokens / 1000000)
+
+    return estimated_cost, total_tokens
+
 def calculate_entropy(probabilities):
     entropy = 0
     for p in probabilities:
@@ -196,13 +208,27 @@ def main(opt):
     data, id_key, n = read_data(filepath, ext, dataset)
     
     model = opt.model
+    assert model in ['gpt-3.5-turbo', 'gpt-4o']
     v = opt.verbose
+    assert v == 0 or v == 1
     max_tokens = opt.max_tokens
+    assert max_tokens > 0
     num_answers = opt.num_answers
+    assert num_answers > 0
     percentile = opt.percentile
     assert int(percentile) in [0, 50, 100]
     temperature = opt.temperature
+    assert 0 <= temperature <= 1
     model_top_p = opt.top_p
+    assert .1 <= model_top_p <= 1
+    
+    system_prompt = "When answering questions, always include relevant information from the question in your response."
+    
+    ##### <prompt the user with the estimated total cost before the first iteration> #####
+    estimated_cost, _ = estimate_cost(n, system_prompt, model, data, max_tokens)
+    res = input(f'Total estimated cost is: ${estimated_cost:.2f}. Continue? [y/n] ')
+    assert res.strip().lower() == 'y', "User decided to abort the process."
+    ##### </prompt the user with the estimated total cost before the first iteration> #####
     
     samples = []
     openai.api_key = opt.api_key
@@ -220,7 +246,7 @@ def main(opt):
             model=model,
             messages=[{
                 "role": "system",
-                "content": "When answering questions, always include relevant information from the question in your response."
+                "content": system_prompt
             },{
                 "role": "user",
                 "content": question
