@@ -225,7 +225,7 @@ def main(opt):
     system_prompt = "When answering questions, always include relevant information from the question in your response."
     
     ##### <prompt the user with the estimated total cost before the first iteration> #####
-    estimated_cost, _ = estimate_cost(n, system_prompt, model, data, max_tokens)
+    estimated_cost, _ = estimate_cost(n, system_prompt, model, data, max_tokens, include_contexts=False)
     res = input(f'Total estimated cost is: ${estimated_cost:.2f}. Continue? [y/n] ')
     assert res.strip().lower() == 'y', "User decided to abort the process."
     ##### </prompt the user with the estimated total cost before the first iteration> #####
