@@ -4,7 +4,8 @@
   <tr>
     <td valign="top" width="80%" style="border-width: 0 !important;">
       <h2>A Generate-Retrieve-Generate Framework for Open Domain Question Answering</h2>
-      <p>A <b>G</b>enerate-<b>Re</b>trieve-<b>G</b>enerate (GReG) Framework for Open Domain Question Answering is a sophisticated AI architecture designed to tackle complex queries that require synthesizing information from multiple sources or steps. This technology stands at the cutting edge of natural language processing and machine learning, offering significant improvements over traditional single-passage retrieval systems.</p>
+      <p>The <b>G</b>enerate-<b>Re</b>trieve-<b>G</b>enerate (GReG) Framework enhances state-of-the-art generative models by incorporating helpful retrieved passages, thereby improving the accuracy and confidence of answers to open-domain multi-hop questions while reducing hallucinations. Initially, the generative model provides an answer based on a simple prompt. A classifier then determines if additional context is needed, based on the entropy of the generated tokens. If more context is required, the framework constructs a query using the question and the initial answer, retrieves relevant passages from Wikipedia, and re-prompts the generative model with a factoid answer-requesting prompt. The model's performance in open-domain QA is evaluated using Exact Match (EM) and ROUGE metrics.</p>
+      
     </td>
     <td valign="top" width="20%" style="border-width: 0 !important;">
       <img src="img/greg.png" width="100%">
