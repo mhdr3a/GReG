@@ -94,4 +94,4 @@ To run Factoid answer generation for llama 3, set the huggingface access token w
 ```
 export HF_TOKEN="your_hugging_face_token"
 ```
-and make sure to set the temperature is bigger than 0. 
+and make sure to set the temperature is greater than 0. 
