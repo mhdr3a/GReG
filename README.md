@@ -88,3 +88,10 @@ python factoid_answer_generator.py \
       --api_key <your_openai_api_key> \
       --metrics <0,1>
 ```
+
+## Llama Setting
+To run Factoid answer generation for llama 3, set the huggingface access token with the following command:
+```
+export HF_TOKEN="your_hugging_face_token"
+```
+and make sure to set the temperature is bigger than 0. 
