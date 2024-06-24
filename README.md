@@ -54,7 +54,7 @@ Replace ```FiD/src/evaluation.py``` with ```GReG/src/evaluation.py```
 
 ```
 <dataset_name> = [MuSiQue, HotpotQA, IIRC, 2WikiMultihopQA, NQ, TriviaQA]
-<model_name> = [gpt-3.5-turbo, llama-3]
+<model_name> = [gpt-3.5-turbo, gpt-4o]
 <temperature> = [0, 1]
 <top_p> = [0.1, 1]
 ```
