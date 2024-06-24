@@ -6,8 +6,8 @@
       <h2>A Generate-Retrieve-Generate Framework for Open Domain Question Answering</h2>
       <p>The <b>G</b>enerate-<b>Re</b>trieve-<b>G</b>enerate (GReG) Framework enhances state-of-the-art generative models by incorporating helpful retrieved passages, thereby improving the accuracy and confidence of answers to open-domain multi-hop questions while reducing hallucinations. Initially, the generative model provides an answer based on a simple prompt. A classifier then determines if additional context is needed, based on the entropy of the generated tokens. If more context is required, the framework constructs a query using the question and the initial answer, retrieves relevant passages from Wikipedia, and re-prompts the generative model with a factoid answer-requesting prompt. The model's performance in open-domain QA is evaluated using Exact Match (EM) and ROUGE metrics.</p>
     </td>
-    <td valign="top" width="20%" style="text-align: center; vertical-align: middle;">
-      <img src="img/greg.png" width="100%" height="50%" style="display: block; margin: auto">
+    <td valign="top" width="20%">
+      <img src="img/greg.png" width="100%">
     </td>
   </tr>
 </table>
