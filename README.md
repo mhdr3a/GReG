@@ -48,8 +48,6 @@ cd GReG
 bash download_datasets.sh # MuSiQue, HotpotQA, IIRC, and 2WikiMultihopQA
 ```
 
-Do NOT do the following steps for the NQ and TQA datasets (use FiD's original files for these two datasets):
-
 1. Replace ```FiD/src/data.py``` with ```GReG/src/data.py```
 
 2. Replace ```FiD/src/evaluation.py``` with ```GReG/src/evaluation.py```
