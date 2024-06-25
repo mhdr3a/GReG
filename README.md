@@ -56,7 +56,7 @@ Do NOT do the following steps for the NQ and TQA datasets (use FiD's original fi
 
 
 ```
-<dataset_name> = [MuSiQue, HotpotQA, IIRC, 2WikiMultihopQA, NQ, TriviaQA]
+<dataset_name> = [MuSiQue, HotpotQA, IIRC, 2WikiMultihopQA, NQ, TQA]
 <model_name> = [gpt-3.5-turbo, gpt-4o]
 <temperature> = [0, 1]
 <top_p> = [0.1, 1]
