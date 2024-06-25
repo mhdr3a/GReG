@@ -66,7 +66,7 @@ python ../FiD/passage_retrieval.py \
     --passages ../FiD/open_domain_data/psgs_w100.tsv \
     --data results/<dataset_name>/<model_name>/<dataset_name>_<model_name>_<0,50>.jsonl \
     --passages_embeddings ../FiD/wikipedia_embeddings_00 \
-    --output_path results/<dataset_name>/percentile_<0,50,100>/retrieved_passages_<temperature>_<top_p>.json \
+    --output_path results/<dataset_name>/percentile_<0,50,100>/retrieved_passages_<model_name>.json \
     --n-docs 10 \
 ```
 
