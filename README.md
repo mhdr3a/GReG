@@ -79,6 +79,7 @@ python template_query_generator.py \
     --percentile <0,50>
 ```
 
+Even if you are generating the factoid answers for the dataset itself, make sure to follow the --data path format to ensure all the parameters (like percentile) are set correctly.
 Factoid answer generation using 4 (top_k > 0: with context | top_k = 0: without context) different prompts (metrics are either 0:(EM, ROUGE-F1, Semantic Similarity) or 1:(Sacc, Lacc)):
 ```
 python factoid_answer_generator.py \
