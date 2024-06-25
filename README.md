@@ -82,7 +82,7 @@ python template_query_generator.py \
 Factoid answer generation using 4 (top_k > 0: with context | top_k = 0: without context) different prompts (metrics are either 0:(EM, ROUGE-F1, Semantic Similarity) or 1:(Sacc, Lacc)):
 ```
 python factoid_answer_generator.py \
-      --data results/<dataset_name>/percentile_<0,50,100>/retrieved_passages_<temperature>_<top_p>.json \
+      --data results/<dataset_name>/percentile_<0,50,100>/retrieved_passages_<model_name>.json \
       --model <model_name> \
       --top_k <0,1,5,10> \
       --api_key <your_openai_api_key> \
