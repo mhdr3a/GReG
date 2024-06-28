@@ -46,11 +46,15 @@ def compute_semantic_similarity(reference, generated):
     return cosine_similarity.item()
 
 def normalize(str1):
+    str1 = str(str1)
     str1_normalized = re.sub(r'[^\w\d]', '', unidecode(re.sub(r'\b(a|an|the)\b', '', str1, flags=re.IGNORECASE)).lower())
     return str1_normalized
 
 def compare(str1, str2):
     return str1 == str2
+
+def compare_with_list(list1, str1):
+    return any(list(map(lambda x: x == str1, list1)))
 
 def estimate_cost(total_samples, fixed_instructions_msg, model, questions, max_output_tokens_per_sample, contexts=None, word_to_token_ratio=1.33, include_contexts=True, question_key='question'):
     fixed_instructions_tokens = word_to_token_ratio * len(fixed_instructions_msg.replace('\n', ' ').strip().split())
@@ -119,7 +123,7 @@ def evaluate_saved_file(opt):
         print(f'\nSacc: {Sa}')
         print(f"Lacc: {La}")
 
-def read_data(filepath, ext, dataset):
+def read_data(filepath, ext):
     data = []
     if ext == 'json':
         data = read_json(filepath)
@@ -128,11 +132,9 @@ def read_data(filepath, ext, dataset):
     else:
         raise InvalidFileExtensionError(ext)
     id_key = None
-    if dataset == 'IIRC':
-        pass
-    elif dataset == 'MuSiQue':
+    if 'id' in data[0]:
         id_key = 'id'
-    else: # HotpotQA and 2WikiMultihopQA
+    elif '_id' in data[0]:
         id_key = '_id'
     n = len(data)
     return data, id_key, n
@@ -163,17 +165,41 @@ def openai_generator(api_key, model, full_prompt, max_tokens, num_answers, tempe
     return response.choices[0].message.content
 
 def evaluate_factoid_answers(metrics, answer, generated_answer, scorer):
+    assert type(answer) == str or type(answer) == list
     EM, precision, recall, fmeasure, sem_sim, Sacc, Lacc = 0, 0, 0, 0, 0, 0, 0
     if metrics == 0 or metrics == 2: # Exact Match (EM) and ROUGE
-        EM = compare(normalize(answer), normalize(generated_answer))
-        scores = scorer.score(answer, generated_answer)['rougeL']
-        precision = scores.precision; recall = scores.recall; fmeasure = scores.fmeasure
+        if type(answer) == str: # for MultihopQA datasets
+            EM = compare(normalize(answer), normalize(generated_answer))
+            scores = scorer.score(answer, generated_answer)['rougeL']
+            precision = scores.precision; recall = scores.recall; fmeasure = scores.fmeasure
+        else: # for NQ and TQA
+            EM = compare_with_list(list(map(normalize, answer)), normalize(generated_answer))
+            precisions, recalls, fmeasures = [], [], []
+            for ans in answer:
+                scores = scorer.score(ans, generated_answer)['rougeL']
+                precisions.append(scores.precision); recalls.append(scores.recall); fmeasures.append(scores.fmeasure)
+            precision = max(precisions); recall = max(recalls); fmeasure = max(fmeasures)
     elif metrics == 1: # Sacc and Lacc (Strict and Lenient Accuracy)
         factoids = json.loads(correct_json_list(generated_answer))
-        Sacc = compute_strict_accuracy(normalize(answer), list(map(normalize, factoids)))
-        Lacc = compute_lenient_accuracy(normalize(answer), list(map(normalize, factoids)))
+        if type(answer) == str: # for MultihopQA datasets
+            Sacc = compute_strict_accuracy(normalize(answer), list(map(normalize, factoids)))
+            Lacc = compute_lenient_accuracy(normalize(answer), list(map(normalize, factoids)))
+        else: # for NQ and TQA
+            Saccs, Laccs = [], []
+            for ans in answer:
+                Sacc = compute_strict_accuracy(normalize(ans), list(map(normalize, factoids)))
+                Lacc = compute_lenient_accuracy(normalize(ans), list(map(normalize, factoids)))
+                Saccs.append(Sacc); Laccs.append(Lacc)
+            Sacc = max(Saccs); Lacc = max(Laccs)
     if metrics == 2: # Semantic Similarity
-        sem_sim = compute_semantic_similarity(answer, generated_answer)
+        if type(answer) == str: # for MultihopQA datasets
+            sem_sim = compute_semantic_similarity(answer, generated_answer)
+        else: # for NQ and TQA
+            sem_sims = []
+            for ans in answer:
+                sem_sim = compute_semantic_similarity(ans, generated_answer)
+                sem_sims.append(sem_sim)
+            sem_sim = max(sem_sims)
     return EM, precision, recall, fmeasure, sem_sim, Sacc, Lacc
 
 def main(opt):
@@ -181,18 +207,18 @@ def main(opt):
     ext = filepath.split('.')[-1]
     dataset = filepath.split('/')[-3]
     percentile = int(filepath.split('/')[-2].split('_')[-1])
-    assert dataset in ['MuSiQue', 'HotpotQA', 'IIRC', '2WikiMultihopQA', 'NQ', 'TriviaQA']
+    assert dataset in ['MuSiQue', 'HotpotQA', 'IIRC', '2WikiMultihopQA', 'NQ', 'TQA']
     
-    data, id_key, n = read_data(filepath, ext, dataset)
+    data, id_key, n = read_data(filepath, ext)
 
     question_key = 'question' if percentile == 100 else 'question_org'
-    answer_key = 'answer' if percentile == 100 else 'answer_org'
+    answer_key = 'answer'
     
     model = opt.model
     assert model in ['gpt-3.5-turbo', 'gpt-4o']
-    v = int(opt.verbose)
+    v = opt.verbose
     assert v == 0 or v == 1
-    max_tokens = int(opt.max_tokens)
+    max_tokens = opt.max_tokens
     assert max_tokens > 0
     num_answers = opt.num_answers
     assert num_answers > 0
@@ -218,7 +244,7 @@ def main(opt):
         datum = data[i]
         question = datum[question_key]
         answer = datum[answer_key]
-        id = datum[id_key]
+        id = datum[id_key] if id_key != None else i
         ##### <defining the prompt> #####
         full_prompt = ''; initial_prompt = ''
         if top_k > 0: # include_contexts = True
@@ -281,7 +307,7 @@ def main(opt):
         print(f"Sem-Sim: {ss}")
     ##### </printing evaluation results> #####
     ##### <saving the results> #####
-    file_path = f'results/{dataset}/{model}/{dataset}_{model}_{top_k}_{include_titles}_{metrics}_{f"{EM}_{acc}_{pre}_{rec}_{f1}_{ss}" if metrics == 2 else (f"{Sa}_{La}" if metrics == 1 else f"{EM}_{acc}_{pre}_{rec}_{f1}")}.jsonl'
+    file_path = f'results/{dataset}/{model}/{dataset}_{percentile}_{model}_{top_k}_{include_titles}_{metrics}_{f"{EM}_{acc}_{pre}_{rec}_{f1}_{ss}" if metrics == 2 else (f"{Sa}_{La}" if metrics == 1 else f"{EM}_{acc}_{pre}_{rec}_{f1}")}.jsonl'
     directory = os.path.dirname(file_path)
     if not os.path.exists(directory):
         os.makedirs(directory)
