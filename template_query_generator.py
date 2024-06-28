@@ -128,16 +128,19 @@ def combine_dependent_words_entropies(words, word_entropies, output_entities, ma
                 word_entropies[i] = max_ents
     return word_entropies
 
-def filter_words(words, word_entropies, question_entities, output_entities, threshold, mask=' '):
-    th = np.percentile(word_entropies, threshold) # threshold = 0 -> ignore_entropies = True, threshold = 100 -> template_query = question
-    filtered_words = []
-    for word, entropy in zip(words, word_entropies):
-        norm_word = remove_punctuation(word)
-        if (entropy > th) and any(norm_word in ent for ent in output_entities) and (not any(norm_word in ent for ent in question_entities)):
-            filtered_words.append(mask)
-            continue
-        filtered_words.append(word)
-    return filtered_words
+def filter_words(words, word_entropies, question_entities, output_entities, thresholds, mask=' '):
+    all_filtered_words = {}
+    for threshold in thresholds:
+        th = np.percentile(word_entropies, threshold) # threshold = 0 -> ignore_entropies = True, threshold = 100 -> template_query = question
+        filtered_words = []
+        for word, entropy in zip(words, word_entropies):
+            norm_word = remove_punctuation(word)
+            if (entropy > th) and any(norm_word in ent for ent in output_entities) and (not any(norm_word in ent for ent in question_entities)):
+                filtered_words.append(mask)
+                continue
+            filtered_words.append(word)
+        all_filtered_words[threshold] = filtered_words
+    return all_filtered_words
 
 def get_entities(sentence):
     entities = []
@@ -160,28 +163,13 @@ def read_json(filepath):
         data = json.load(file)
     return data
 
-def iirc_preprocess(d):
-    no_ans = 0; ans = 0
-    data = []
-    for x in d:
-        for y in x['questions']:
-            try:
-                answer_spans = y['answer']['answer_spans']
-                answer = ' '.join(list(map(lambda h: h['text'], answer_spans)))
-                question = y['question']
-                data.append({'question': question, 'answer': answer})
-                ans += 1
-            except:
-                no_ans += 1
-    return data
-
 class InvalidFileExtensionError(Exception):
     def __init__(self, extension, message="Invalid file extension"):
         self.extension = extension
         self.message = f"{message}: {extension}"
         super().__init__(self.message)
 
-def read_data(filepath, ext, dataset):
+def read_data(filepath, ext):
     data = []
     if ext == 'json':
         data = read_json(filepath)
@@ -190,11 +178,9 @@ def read_data(filepath, ext, dataset):
     else:
         raise InvalidFileExtensionError(ext)
     id_key = None
-    if dataset == 'IIRC':
-        pass
-    elif dataset == 'MuSiQue':
+    if 'id' in data[0]:
         id_key = 'id'
-    else: # HotpotQA and 2WikiMultihopQA
+    elif '_id' in data[0]:
         id_key = '_id'
     n = len(data)
     return data, id_key, n
@@ -203,9 +189,12 @@ def main(opt):
     filepath = opt.data
     ext = filepath.split('.')[-1]
     dataset = filepath.split('/')[-2]
-    assert dataset in ['MuSiQue', 'HotpotQA', 'IIRC', '2WikiMultihopQA', 'NQ', 'TriviaQA']
+    assert dataset in ['MuSiQue', 'HotpotQA', 'IIRC', '2WikiMultihopQA', 'NQ', 'TQA']
     
-    data, id_key, n = read_data(filepath, ext, dataset)
+    data, id_key, n = read_data(filepath, ext)
+    
+    question_key = 'question'
+    answer_key = 'answer'
     
     model = opt.model
     assert model in ['gpt-3.5-turbo', 'gpt-4o']
@@ -215,8 +204,8 @@ def main(opt):
     assert max_tokens > 0
     num_answers = opt.num_answers
     assert num_answers > 0
-    percentile = opt.percentile
-    assert int(percentile) in [0, 50, 100]
+    percentile = list(set(opt.percentile))
+    assert len(percentile) > 0
     temperature = opt.temperature
     assert 0 <= temperature <= 1
     model_top_p = opt.top_p
@@ -230,13 +219,13 @@ def main(opt):
     assert res.strip().lower() == 'y', "User decided to abort the process."
     ##### </prompt the user with the estimated total cost before the first iteration> #####
     
-    samples = []
+    samples = {}
     openai.api_key = opt.api_key
     for sample_index in trange(n):
-        id = data[sample_index][id_key] if id_key != None else None
-        question = data[sample_index]['question']
+        id = data[sample_index][id_key] if id_key != None else sample_index
+        question = data[sample_index][question_key]
         question_entities = get_entities(question)
-        answer = data[sample_index]['answer']
+        answer = data[sample_index][answer_key]
         if v:
             print(f"Q: {highlight_ngrams(question, question_entities, highlight_all=False)}")
             print(f"A: {answer}")
@@ -297,17 +286,20 @@ def main(opt):
 
             filtered_words = filter_words(words, word_entropies, question_entities, generated_answer_entities, percentile)
             if v:
-                print(f"template query: {' '.join(filtered_words)}\n")
-            template_query = question + ' ' + ' '.join(filtered_words).strip()
-            new_sample = {'id': id, 'question_org': question, 'question': template_query, 'answer_org': answer, 'answer': 'None'}
-            samples.append(new_sample)
-    file_path = f"results/{dataset}/{model}/{dataset}_{model}_{percentile}.jsonl"
-    directory = os.path.dirname(file_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    with open(file_path, 'w') as file:
-        for item in samples:
-            file.write(json.dumps(item) + '\n')
+                for key, value in filtered_words.items():
+                    print(f"template query (th={key}): {' '.join(value)}\n")
+            for key, value in filtered_words.items():
+                template_query = question + ' ' + ' '.join(value).strip()
+                new_sample = {'id': id, 'question_org': question, 'question': template_query, 'answer': answer}
+                samples.setdefault(key, []).append(new_sample)
+    for percent in percentile:
+        file_path = f"results/{dataset}/{model}/template_queries_{dataset}_{model}_{percent}.jsonl"
+        directory = os.path.dirname(file_path)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        with open(file_path, 'w') as file:
+            for sample in samples[percent]:
+                file.write(json.dumps(sample) + '\n')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -322,12 +314,12 @@ if __name__ == '__main__':
                         help="Maximum number of the output tokens")
     parser.add_argument('--num_answers', required=False, type=int, default=1, 
                         help="Number of answers generated by the model")
-    parser.add_argument('--temperature', required=False, type=float, default=1, 
+    parser.add_argument('--temperature', required=False, type=float, default=0, 
                         help="Model config")
-    parser.add_argument('--top_p', required=False, type=float, default=1, 
+    parser.add_argument('--top_p', required=False, type=float, default=.1, 
                         help="Model config")
-    parser.add_argument('--percentile', required=False, type=int, default=50, 
-                        help="0: ignore_entropies = True | 100: template_query = question | 50: named_entities_masking_threshold = median(all_entropies)")
+    parser.add_argument('--percentile', required=False, type=int, nargs='+', default=[0, 50], 
+                    help="0: ignore_entropies = True | 100: template_query = question | 50: named_entities_masking_threshold = median(all_entropies)")
     parser.add_argument('--verbose', required=False, type=int, default=0, 
                         help="0: Do not print the logs | 1: Print the logs")
 
