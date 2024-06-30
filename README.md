@@ -36,6 +36,13 @@ python  generate_passage_embeddings.py \
         --shard_id 0 \
         --num_shards 1 \
         --per_gpu_batch_size 500 \
+python  generate_passage_embeddings.py \
+        --model_path pretrained_models/tqa_retriever \
+        --passages open_domain_data/psgs_w100.tsv \
+        --output_path wikipedia_embeddings \
+        --shard_id 0 \
+        --num_shards 1 \
+        --per_gpu_batch_size 500 \
 pip install gdown
 pip install openai
 pip install IPython
