@@ -74,11 +74,11 @@ bash download_datasets.sh # MuSiQue, HotpotQA, IIRC, and 2WikiMultihopQA
 Passage retrieval using a pre-trained DPR on NQ (percentile = 100: query = question, 50: template query considering entropies, 0: template query ignoring entropies):
 ```
 python ../FiD/passage_retrieval.py \
-    --model_path ../FiD/pretrained_models/nq_retriever \
+    --model_path ../FiD/pretrained_models/<retriever_name>_retriever \
     --passages ../FiD/open_domain_data/psgs_w100.tsv \
     --data results/<dataset_name>/<model_name>/<dataset_name>_<model_name>_<0,50>.jsonl \
     --passages_embeddings ../FiD/wikipedia_embeddings_<retriever_name>_00 \
-    --output_path results/<dataset_name>/percentile_<0,50,100>/retrieved_passages_<model_name>.json \
+    --output_path results/<dataset_name>/percentile_<0,50,100>/retrieved_passages_<model_name>_<retriever_name>.json \
     --n-docs 10 \
 ```
 
