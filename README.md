@@ -25,6 +25,9 @@ pip install filelock
 pip install typing-extensions
 bash get-data.sh
 bash get-model.sh -m nq_retriever
+wget https://dl.fbaipublicfiles.com/FiD/pretrained_models/tqa_retriever.tar.gz
+tar -xzvf tqa_retriever.tar.gz -C pretrained_models/
+rm tqa_retriever.tar.gz
 conda install six
 python  generate_passage_embeddings.py \
         --model_path pretrained_models/nq_retriever \
