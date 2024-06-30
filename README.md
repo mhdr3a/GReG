@@ -32,14 +32,14 @@ conda install six
 python  generate_passage_embeddings.py \
         --model_path pretrained_models/nq_retriever \
         --passages open_domain_data/psgs_w100.tsv \
-        --output_path wikipedia_embeddings \
+        --output_path wikipedia_embeddings_nq \
         --shard_id 0 \
         --num_shards 1 \
         --per_gpu_batch_size 500 \
 python  generate_passage_embeddings.py \
         --model_path pretrained_models/tqa_retriever \
         --passages open_domain_data/psgs_w100.tsv \
-        --output_path wikipedia_embeddings \
+        --output_path wikipedia_embeddings_tqa \
         --shard_id 0 \
         --num_shards 1 \
         --per_gpu_batch_size 500 \
