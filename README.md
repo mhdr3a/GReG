@@ -85,10 +85,9 @@ python ../FiD/passage_retrieval.py \
 Template query generation in 2 ways (percentile = 50: considering the entropies median as a threshold to mask the named entities | 0: masking all the named entities present in the answer yet absent in the question):
 ```
 python template_query_generator.py \
-    --data data/<dataset_name>/<filename> \
+    --data data/<dataset_name>/<model_name>/template_queries_<dataset_name>_<model_name>_<0,50>_<temperature>_<top_p>.jsonl \
     --model <model_name> \
     --api_key <your_openai_api_key> \
-    --percentile <0,50>
 ```
 
 Even if you are generating the factoid answers for the dataset itself, make sure to follow the --data path format to ensure all the parameters (like percentile) are set correctly.
