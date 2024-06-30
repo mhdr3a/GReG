@@ -66,6 +66,7 @@ bash download_datasets.sh # MuSiQue, HotpotQA, IIRC, and 2WikiMultihopQA
 ```
 <dataset_name> = [MuSiQue, HotpotQA, IIRC, 2WikiMultihopQA, NQ, TQA]
 <model_name> = [gpt-3.5-turbo, gpt-4o]
+<retriever_name> = [nq, tqa]
 <temperature> = [0, 1]
 <top_p> = [0.1, 1]
 ```
@@ -76,7 +77,7 @@ python ../FiD/passage_retrieval.py \
     --model_path ../FiD/pretrained_models/nq_retriever \
     --passages ../FiD/open_domain_data/psgs_w100.tsv \
     --data results/<dataset_name>/<model_name>/<dataset_name>_<model_name>_<0,50>.jsonl \
-    --passages_embeddings ../FiD/wikipedia_embeddings_00 \
+    --passages_embeddings ../FiD/wikipedia_embeddings_<retriever_name>_00 \
     --output_path results/<dataset_name>/percentile_<0,50,100>/retrieved_passages_<model_name>.json \
     --n-docs 10 \
 ```
