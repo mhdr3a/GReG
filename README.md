@@ -56,6 +56,8 @@ cd ..
 git clone https://github.com/mhdr3a/GReG.git
 cd GReG
 bash download_datasets.sh # MuSiQue, HotpotQA, IIRC, and 2WikiMultihopQA
+pip install huggingface-hub==0.23.4 pyyaml==6.0.1 safetensors==0.4.3 tokenizers==0.19.1 transformers==4.42.3
+pip install accelerate==0.31.0 psutil==6.0.0
 ```
 
 1. Replace ```FiD/src/data.py``` with ```GReG/src/data.py```
