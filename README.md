@@ -3,7 +3,7 @@
 <table style="border: none;">
   <tr>
     <td valign="top" width="80%">
-      <h2>A Generate-Retrieve-Generate Framework for Open Domain Question Answering</h2>
+      <h2>A Generate-Retrieve-Generate Framework for Enhanced Generative Question Answering</h2>
       <p>We present the <b>G</b>enerate-<b>Re</b>trieve-<b>G</b>enerate (GReG) pipeline, which leverages the intrinsic knowledge of large language models (LLMs) for improved passage retrieval without requiring architectural changes or additional training. The GReG pipeline operates in three stages: (1) generating an initial long-form response with an LLM, (2) refining this response to form a retrieval query by removing hallucinations, and (3) using the original question and the retrieved passages to prompt an LLM to produce a concise factoid answer. We utilize advanced models such as GPT-3.5-Turbo-0125 and Llama3-ChatQA-1.5-8B for this process. Evaluations on four multi-hop QA datasets and two open-domain QA datasets demonstrate that GReG outperforms traditional QA approaches and in-context retrieval-augmented generation methods. These results highlight the effectiveness of incorporating LLM insights to enhance retrieval and improve answer accuracy in open-domain question answering.</p>
     </td>
     <td valign="top" width="20%">
