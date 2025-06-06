@@ -308,7 +308,7 @@ if __name__ == '__main__':
                         help="Path to the data")
     parser.add_argument('--model', required=False, type=str, default='gpt-3.5-turbo', 
                         help="Exact name of the model")
-    parser.add_argument('--api_key', required=False, type=str, default='sk-proj-GoCByQuK462EuWXCXjEkT3BlbkFJD8h4uoNag5STZiKJdpN7', 
+    parser.add_argument('--api_key', required=False, type=str, default='', 
                         help="OpenAI API key")
     parser.add_argument('--max_tokens', required=False, type=int, default=50, 
                         help="Maximum number of the output tokens")
