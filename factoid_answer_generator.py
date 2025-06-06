@@ -327,7 +327,7 @@ if __name__ == '__main__':
                         help="Top-k contexts used for Retrieval-Augmented Generation (RAG)")
     parser.add_argument('--include_titles', required=False, type=int, default=1, 
                         help="0: Do not include the titles for the contexts | 1: Include the titles for the contexts | Only works when top_k > 0")
-    parser.add_argument('--api_key', required=False, type=str, default='sk-proj-GoCByQuK462EuWXCXjEkT3BlbkFJD8h4uoNag5STZiKJdpN7', 
+    parser.add_argument('--api_key', required=False, type=str, default='', 
                         help="OpenAI API key")
     parser.add_argument('--max_tokens', required=False, type=int, default=50, 
                         help="Maximum number of the output tokens")
