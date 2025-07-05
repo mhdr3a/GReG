@@ -12,94 +12,43 @@
   </tr>
 </table>
 
-Initial Setup:
+### Initial Setup:
 ```
-conda create --name greg python=3.8
-conda activate greg
-conda install pip
-git clone https://github.com/facebookresearch/FiD.git
-pip install "pydantic>=1.7.4,<3.0.0"
-cd FiD
-pip install -r requirements.txt
-pip install filelock
-pip install typing-extensions
-bash get-data.sh
-bash get-model.sh -m nq_retriever
-wget https://dl.fbaipublicfiles.com/FiD/pretrained_models/tqa_retriever.tar.gz
-tar -xzvf tqa_retriever.tar.gz -C pretrained_models/
-rm tqa_retriever.tar.gz
-conda install six
-python  generate_passage_embeddings.py \
-        --model_path pretrained_models/nq_retriever \
-        --passages open_domain_data/psgs_w100.tsv \
-        --output_path wikipedia_embeddings_nq \
-        --shard_id 0 \
-        --num_shards 1 \
-        --per_gpu_batch_size 500 \
-python  generate_passage_embeddings.py \
-        --model_path pretrained_models/tqa_retriever \
-        --passages open_domain_data/psgs_w100.tsv \
-        --output_path wikipedia_embeddings_tqa \
-        --shard_id 0 \
-        --num_shards 1 \
-        --per_gpu_batch_size 500 \
-pip install gdown
+conda create --name geregen
+conda activate geregen
+
+conda install -c conda-forge unidecode
 pip install openai
-pip install IPython
-pip install spacy
-python -m spacy download en_core_web_md
-pip install matplotlib
-pip install termcolor
-pip install unidecode
-pip install rouge-score
-cd ..
+conda install -c conda-forge numpy
+conda install -c conda-forge matplotlib
+conda install -c conda-forge spacy
+pip install transformers
+conda install pytorch pytorch-cuda=12.1 -c pytorch -c nvidia
+conda install -c conda-forge termcolor
+pip install dspy
+python3 -m spacy download en_core_web_md
 git clone https://github.com/mhdr3a/GReG.git
 cd GReG
-bash download_datasets.sh # MuSiQue, HotpotQA, IIRC, and 2WikiMultihopQA
-pip install huggingface-hub==0.23.4 pyyaml==6.0.1 safetensors==0.4.3 tokenizers==0.19.1 transformers==4.42.3
-pip install accelerate==0.31.0 psutil==6.0.0
+bash download_datasets.sh # requires the subsample.py file
+bash run_hints_batch.sh # requires the hint_generator.py file .. Remember to wipe off your open ai api key
 ```
 
-1. Replace ```FiD/src/data.py``` with ```GReG/src/data.py```
+Note that you can change the model name, or the using_batch_api option (to get the results instantaneously), otherwise, you'll need to run the next command
+```
+bash run_hints_prev.sh
+```
+Remember to insert your open ai api key
+Note that you need to make sure that all the batch runs are done before running this bash command by checking your open ai batch api dashboard
 
-2. Replace ```FiD/src/evaluation.py``` with ```GReG/src/evaluation.py```
+Now run the following command to process the folds and select the final retrieval query based on the median value of token entropies.
+```
+python3 hint_selector.py
+```
+it also saves a histogram of the distribution of the folds candidating the best query in the final selection of queries.
 
+now it's time for retrieval of relevant Wikipedia passages using the best queries (most certain queries) saved in runs/hints/{dataset}/{model}/best_queries.jsonl using ColBERTv2 and from Wikipedia 2017 abstracts dump.
 
 ```
-<dataset_name> = [MuSiQue, HotpotQA, IIRC, 2WikiMultihopQA]
-<model_name> = [gpt-4o]
-<retriever_name> = [nq]
-<temperature> = [0, 1]
-<top_p> = [0.1, 1]
-```
-
-Passage retrieval using a pre-trained DPR on NQ:
-```
-python ../FiD/passage_retrieval.py \
-    --model_path ../FiD/pretrained_models/<retriever_name>_retriever \
-    --passages ../FiD/open_domain_data/psgs_w100.tsv \
-    --data results/<dataset_name>/<model_name>/template_queries_<dataset_name>_<model_name>.jsonl \
-    --passages_embeddings ../FiD/wikipedia_embeddings_<retriever_name>_00 \
-    --output_path results/<dataset_name>/retrieved_passages_<model_name>_<retriever_name>.json \
-    --n-docs 10 \
+python3 retriever.py
 ```
 
-Template query generation:
-```
-python template_query_generator.py \
-    --data data/<dataset_name>/<model_name>/template_queries_<dataset_name>_<model_name>_<temperature>_<top_p>.jsonl \
-    --model <model_name> \
-    --api_key <your_openai_api_key> \
-    --temperature <temperature> \
-```
-
-Even if you are generating the factoid answers for the dataset itself, make sure to follow the --data path format to ensure all the parameters are set correctly.
-Factoid answer generation using 4 (top_k > 0: with context | top_k = 0: without context) different prompts (metrics are either 0:(EM, ROUGE-F1, Semantic Similarity) or 1:(Sacc, Lacc)):
-```
-python factoid_answer_generator.py \
-      --data results/<dataset_name>/retrieved_passages_<model_name>.json \
-      --model <model_name> \
-      --top_k <0,1,5,10> \
-      --api_key <your_openai_api_key> \
-      --metrics <0,1>
-```
