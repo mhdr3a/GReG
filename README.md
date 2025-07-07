@@ -14,7 +14,7 @@
 
 ### Initial Setup:
 ```
-conda create --name geregen
+conda create --name geregen python=3.12
 conda activate geregen
 
 conda install -c conda-forge unidecode
