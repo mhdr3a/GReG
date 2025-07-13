@@ -56,7 +56,9 @@ python3 retriever.py
 We leverage the following prompts to get the results from different LLMs:
 
 #### Hint Generation (new retrieval query)
+```
 system_instruction = "When answering questions, always include relevant information from the question in your response."
+```
 and we only provide the model with the question to get a long-form (hint-enriched) answer. This is only for GPT based models used in this paper for hint generation (GPT-4o and GPT-3.5-turbo-instruct).
 
 #### Answer Generation (factoid answers)
