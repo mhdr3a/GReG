@@ -62,6 +62,7 @@ and we only provide the model with the question to get a long-form (hint-enriche
 #### Answer Generation (factoid answers)
 - GPT Models:
   - top_k > 0 (have augmented context)
+```
 system = "System: This is a chat between a user and an artificial intelligence assistant."
 initial_prompt = (
                 "You are an expert assistant in answering complex and **Multi-Hop** questions after <Question>. "
@@ -101,7 +102,9 @@ full_prompt = (
                     f"<doc>\n{doc_content}\n</doc>\n"
                     f"<Question>: {datum['question']}\nAssistant:\nSo, the answer is:"
                 )
+```
   - top_k = 0 (no context augmentation)
+```
 initial_prompt = (   
                     "As an expert assistant in answering complex and **Multi-Hop** questions, your task is to answer the given question after <Question>."
                     "You must use logical reasoning to arrive at the best possible answer.\n"
@@ -126,10 +129,13 @@ initial_prompt = (
 
 full_prompt = (
                 f"System: This is a chat between a user and an artificial intelligence assistant\n\nUser:{initial_prompt}\n<Question>:{datum['question_org']}\n\nAssistant:\nSo, the answer is:")
-
+```
 - Others (Vicuna and Qwen):
+```
   system = "System: This is a chat between a user and an artificial intelligence assistant."
+```
   - top_k > 0
+```
     instruction = (
             "As an expert assistant in answering complex and **Multi-Hop** questions, your task is to answer the given question after <Question> based on the provided knowledge enclosed within <doc> and </doc> tags.\n"
             "In case of **yes/no** questions, **only** answer with **yes** or **no**.\n"
@@ -171,8 +177,9 @@ full_prompt = (
             f"<Question>: {question}\nAssistant:\nSo, the answer is:"
         )
         print(formatted_input)
-
+```
     - top_k = 0
+```
       instruction = (
             "As an expert assistant in answering complex and **Multi-Hop** questions, your task is to answer the given question after <Question>."
             "In case of **yes/no** questions, **only** answer with **yes** or **no**.\n"
@@ -192,6 +199,7 @@ full_prompt = (
             "<Question>: 'Remember Me Ballin’' is a CD single by Indo G that features an American rapper born in what year?\n"
             "So, the answer is: 1979\n\n"
         )
+```
 
         conversation = f"User:{instruction}\n<Question>: {question}\n\n"
         formatted_input = f"{system}\n\n{conversation}Assistant:\nSo, the answer is:"
