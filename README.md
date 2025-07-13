@@ -203,7 +203,6 @@ full_prompt = (
             "<Question>: 'Remember Me Ballin’' is a CD single by Indo G that features an American rapper born in what year?\n"
             "So, the answer is: 1979\n\n"
         )
-```
-
         conversation = f"User:{instruction}\n<Question>: {question}\n\n"
         formatted_input = f"{system}\n\n{conversation}Assistant:\nSo, the answer is:"
+```
