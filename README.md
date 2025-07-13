@@ -178,7 +178,9 @@ full_prompt = (
         )
         print(formatted_input)
 ```
-    - top_k = 0
+
+  - top_k = 0
+
 ```
       instruction = (
             "As an expert assistant in answering complex and **Multi-Hop** questions, your task is to answer the given question after <Question>."
