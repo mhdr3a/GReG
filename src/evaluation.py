@@ -5,7 +5,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-# Modified by: mhdr3a (Mahdiyar Alavi)
+# Modified by: -
 
 import collections
 import logging
