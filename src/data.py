@@ -4,7 +4,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-# Modified by: -
+# Modified by: ---
 
 import torch
 import random
