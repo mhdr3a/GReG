@@ -1,10 +1,10 @@
-# GReG
+# GReG: A Training-free Generate-Retrieve-Generate Pipeline
 
 <table style="border: none;">
   <tr>
     <td valign="top" width="80%">
       <h2>From Hints to Answers: Uncertainty-Aware LLM-Guided Retrieval for Multi-Hop Question Answering</h2>
-      <p>we propose a <b>G</b>enerate-<b>Re</b>trieve-<b>G</b>enerate (GReG) pipeline for multi-hop open-domain question answering (QA) that improves the accuracy of Retrieval-Augmented Language Models (RALMs). RALMs improve answer generation by incorporating external evidence into the model's input. The proposed GReG pipeline leverages the parametric knowledge of large language models (LLMs) to produce semantically rich “hints” in the form of long-form answers, which are repurposed as retrieval queries to obtain relevant supporting evidence. To mitigate hallucination and improve reliability, GReG includes an entropy-based uncertainty estimation method that filters out low-confidence hints. Overall, GReG enables a smaller, more efficient language model to answer complex questions more accurately by augmenting it with high-quality evidence retrieved through hint-based search. Experiments on prominent multi-hop QA datasets show that GReG outperforms strong baselines under identical retrieval and generation settings.</p>
+      <p>We propose a <b>G</b>enerate-<b>Re</b>trieve-<b>G</b>enerate (GReG) pipeline for multi-hop open-domain question answering (QA) that improves the accuracy of Retrieval-Augmented Language Models (RALMs). RALMs improve answer generation by incorporating external evidence into the model's input. The proposed GReG pipeline leverages the parametric knowledge of large language models (LLMs) to produce semantically rich “hints” in the form of long-form answers, which are repurposed as retrieval queries to obtain relevant supporting evidence. To mitigate hallucination and improve reliability, GReG includes an entropy-based uncertainty estimation method that filters out low-confidence hints. Overall, GReG enables a smaller, more efficient language model to answer complex questions more accurately by augmenting it with high-quality evidence retrieved through hint-based search. Experiments on prominent multi-hop QA datasets show that GReG outperforms strong baselines under identical retrieval and generation settings.</p>
     </td>
     <td valign="top" width="20%">
       <img src="img/greg.png" width="100%">
